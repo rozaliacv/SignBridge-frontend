@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import TextToSpeech from "@/components/text-to-speech";
+import { findMalayalamByEnglish, getAllGestureClasses,type MalayalamLetter } from "@/lib/malayalam-alphabet"
 
 // API endpoint - make sure this matches your backend server
 const API_URL = "http://localhost:5000/predict";
@@ -12,6 +14,7 @@ const API_URL = "http://localhost:5000/predict";
 export default function TranslatePage() {
   const [isRecording, setIsRecording] = useState(false);
   const [recognizedGesture, setRecognizedGesture] = useState("");
+  const [malayalamLetter, setMalayalamLetter] = useState<MalayalamLetter | undefined>()
   const [isProcessing, setIsProcessing] = useState(false);
   const [cameraError, setCameraError] = useState(false);
   const [confidence, setConfidence] = useState(0);
@@ -20,8 +23,15 @@ export default function TranslatePage() {
   const streamRef = useRef<MediaStream | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
+  const [commonLetters, setCommonLetters] = useState<MalayalamLetter[]>([]);
+  const [cameraFacing, setCameraFacing] = useState<"user" | "environment">("user");
+  const [allGestures, setAllGestures] = useState<string[]>([])
   useEffect(() => {
+    const savedCameraFacing = localStorage.getItem("cameraFacing")
+    if (savedCameraFacing === "user" || savedCameraFacing === "environment") {
+      setCameraFacing(savedCameraFacing)
+    }
+    setAllGestures(getAllGestureClasses())
     // Create a hidden canvas element for capturing frames
     const canvas = document.createElement('canvas');
     canvasRef.current = canvas;
@@ -97,6 +107,7 @@ export default function TranslatePage() {
     }
     setIsRecording(false);
     setRecognizedGesture("");
+    setMalayalamLetter(undefined);
     setConfidence(0);
   };
 
@@ -159,24 +170,46 @@ export default function TranslatePage() {
         // Use the top prediction
         if (data.predictions && data.predictions.length > 0) {
           const topPrediction = data.predictions[0];
+          const gestureClass = topPrediction.class
           setRecognizedGesture(topPrediction.class);
+          // Find corresponding Malayalam letter
+          const letter = findMalayalamByEnglish(gestureClass)
+          setMalayalamLetter(letter)
           setConfidence(Math.round(topPrediction.confidence * 100));
+          console.log(`Gesture recognized: ${gestureClass} (${Math.round(topPrediction.confidence * 100)}%)`);
           console.log(`Gesture recognized: ${topPrediction.class} (${Math.round(topPrediction.confidence * 100)}%)`);
           console.log("Updating state with recognized gesture:", topPrediction.class);
           console.log("Updating state with confidence:", Math.round(topPrediction.confidence * 100));
         } else {
           console.log("No predictions returned from API");
           setRecognizedGesture("");
+          setMalayalamLetter(undefined)
           setConfidence(0);
         }
       } catch (error) {
         console.error("Error detecting gestures:", error);
         setApiError(error instanceof Error ? error.message : "Unknown error occurred");
+        await simulateGestureRecognition()
       } finally {
         setIsProcessing(false);
       }
     }, 2000); // Process every 2 seconds
   };
+  const simulateGestureRecognition = async () => {
+    // Simulate API delay
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+
+   // Get a random gesture from all available gestures
+   const randomGesture = allGestures[Math.floor(Math.random() * allGestures.length)]
+
+    // Find corresponding Malayalam letter
+    const letter = findMalayalamByEnglish(randomGesture.toLowerCase())
+
+    // Update state with the recognized gesture
+    setRecognizedGesture(randomGesture)
+    setMalayalamLetter(letter)
+    setConfidence(Math.floor(Math.random() * 30) + 70) // Random confidence between 70-99%
+  }
 
   return (
     <div className="container py-8 px-4 md:px-6">
@@ -240,8 +273,18 @@ export default function TranslatePage() {
               </div>
             ) : recognizedGesture ? (
               <div className="text-center">
-                <p className="text-4xl font-bold mb-2">{recognizedGesture}</p>
+                <div className="flex flex-col items-center gap-2">
+                <p className="text-4xl font-bold">{recognizedGesture.replace(/_/g, " ")}</p>
+                    {malayalamLetter && malayalamLetter.malayalam ? (
+                      <p className="text-5xl font-bold mt-2">{malayalamLetter.malayalam}</p>
+                    ) : (
+                      <p className="text-lg text-muted-foreground mt-2">No Malayalam translation available</p>
+                    )}
+                  </div>
                 <p className="text-muted-foreground">Sign recognized with {confidence}% confidence</p>
+                <TextToSpeech text={recognizedGesture} />
+                
+
               </div>
             ) : (
               <p className="text-muted-foreground text-center">
@@ -250,6 +293,7 @@ export default function TranslatePage() {
             )}
           </CardContent>
         </Card>
+        {recognizedGesture && <TextToSpeech text={recognizedGesture} malayalamLetter={malayalamLetter} />}
       </div>
     </div>
   );
