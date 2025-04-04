@@ -1,103 +1,103 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Volume2, VolumeX } from "lucide-react"
-import type { MalayalamLetter } from "@/lib/malayalam-alphabet"
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Volume2, VolumeX } from "lucide-react";
+import type { MalayalamLetter } from "@/lib/malayalam-alphabet";
 
 interface TextToSpeechProps {
-  text: string
-  malayalamLetter?: MalayalamLetter
+  text: string;
+  malayalamLetter?: MalayalamLetter;
 }
 
 export default function TextToSpeech({ text, malayalamLetter }: TextToSpeechProps) {
-  const [isSpeaking, setIsSpeaking] = useState(false)
-  const [malayalamVoice, setMalayalamVoice] = useState<SpeechSynthesisVoice | null>(null)
-  const [fallbackVoice, setFallbackVoice] = useState<SpeechSynthesisVoice | null>(null)
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [malayalamVoice, setMalayalamVoice] = useState<SpeechSynthesisVoice | null>(null);
+  const [fallbackVoice, setFallbackVoice] = useState<SpeechSynthesisVoice | null>(null);
 
   // Initialize speech synthesis and find appropriate voices
   useEffect(() => {
-    const synth = window.speechSynthesis
+    const synth = window.speechSynthesis;
 
     // Function to find the best voice for Malayalam
     const findVoices = () => {
-      const availableVoices = synth.getVoices()
+      const availableVoices = synth.getVoices();
 
       // Try to find Malayalam voice
-      const mlVoice = availableVoices.find((v) => v.lang.includes("ml"))
+      const mlVoice = availableVoices.find((v) => v.lang.includes("ml"));
       if (mlVoice) {
-        setMalayalamVoice(mlVoice)
+        setMalayalamVoice(mlVoice);
       }
 
       // Set fallback voice (Hindi or any Indian language, or default)
-      const hindiVoice = availableVoices.find((v) => v.lang.includes("hi"))
-      const tamilVoice = availableVoices.find((v) => v.lang.includes("ta"))
-      const teluguVoice = availableVoices.find((v) => v.lang.includes("te"))
-      const kannadaVoice = availableVoices.find((v) => v.lang.includes("kn"))
+      const hindiVoice = availableVoices.find((v) => v.lang.includes("hi"));
+      const tamilVoice = availableVoices.find((v) => v.lang.includes("ta"));
+      const teluguVoice = availableVoices.find((v) => v.lang.includes("te"));
+      const kannadaVoice = availableVoices.find((v) => v.lang.includes("kn"));
 
       // Choose the first available Indian language voice as fallback
-      setFallbackVoice(mlVoice || hindiVoice || tamilVoice || teluguVoice || kannadaVoice || availableVoices[0])
-    }
+      setFallbackVoice(mlVoice || hindiVoice || tamilVoice || teluguVoice || kannadaVoice || availableVoices[0]);
+    };
 
     // Chrome loads voices asynchronously
     if (synth.onvoiceschanged !== undefined) {
-      synth.onvoiceschanged = findVoices
+      synth.onvoiceschanged = findVoices;
     }
 
     // Initial load attempt
-    findVoices()
+    findVoices();
 
     // Cleanup
     return () => {
       if (synth.speaking) {
-        synth.cancel()
+        synth.cancel();
       }
-    }
-  }, [])
+    };
+  }, []);
 
   const speak = () => {
-    if (!window.speechSynthesis) return
+    if (!window.speechSynthesis) return;
 
     // Cancel any ongoing speech
-    window.speechSynthesis.cancel()
+    window.speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance()
+    const utterance = new SpeechSynthesisUtterance();
 
     // Set the text to speak based on what's available
-    if (malayalamLetter && malayalamLetter.malayalam) {
-      // Use the pronunciation field which has the correct pronunciation
-      utterance.text = malayalamLetter.pronunciation
+    if (malayalamLetter && malayalamLetter.pronunciation) {
+      // Use the pronunciation field for Malayalam letters
+      utterance.text = malayalamLetter.pronunciation;
 
       // Try to use Malayalam voice if available
       if (malayalamVoice) {
-        utterance.voice = malayalamVoice
+        utterance.voice = malayalamVoice;
       } else if (fallbackVoice) {
-        utterance.voice = fallbackVoice
+        utterance.voice = fallbackVoice;
       }
     } else {
-      // Clean up the text by replacing underscores with spaces
-      utterance.text = text.replace(/_/g, " ")
+      // Fallback to English text if no Malayalam translation is available
+      utterance.text = text.replace(/_/g, " ");
 
       // Use fallback voice
       if (fallbackVoice) {
-        utterance.voice = fallbackVoice
+        utterance.voice = fallbackVoice;
       }
     }
 
-    utterance.onstart = () => setIsSpeaking(true)
-    utterance.onend = () => setIsSpeaking(false)
-    utterance.onerror = () => setIsSpeaking(false)
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
 
-    window.speechSynthesis.speak(utterance)
-  }
+    window.speechSynthesis.speak(utterance);
+  };
 
   const stopSpeaking = () => {
     if (window.speechSynthesis) {
-      window.speechSynthesis.cancel()
-      setIsSpeaking(false)
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
     }
-  }
+  };
 
   return (
     <Card>
@@ -109,15 +109,17 @@ export default function TextToSpeech({ text, malayalamLetter }: TextToSpeechProp
         <div className="text-center mb-4">
           <div className="flex flex-col items-center gap-2">
             <p className="text-4xl font-bold">{text.replace(/_/g, " ")}</p>
-            {malayalamLetter && malayalamLetter.malayalam ? (
-              <p className="text-5xl font-bold mt-2">{malayalamLetter.malayalam}</p>
+            {malayalamLetter ? (
+              <>
+                <p className="text-5xl font-bold mt-2">{malayalamLetter.malayalam}</p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Pronunciation: {malayalamLetter.pronunciation}
+                </p>
+              </>
             ) : (
               <p className="text-lg text-muted-foreground mt-2">No Malayalam translation available</p>
             )}
           </div>
-          <p className="text-sm text-muted-foreground mt-2">
-            {malayalamLetter && malayalamLetter.pronunciation ? `Pronunciation: ${malayalamLetter.pronunciation}` : ""}
-          </p>
         </div>
       </CardContent>
       <CardFooter className="flex justify-between">
@@ -134,5 +136,5 @@ export default function TextToSpeech({ text, malayalamLetter }: TextToSpeechProp
         )}
       </CardFooter>
     </Card>
-  )
+  );
 }
