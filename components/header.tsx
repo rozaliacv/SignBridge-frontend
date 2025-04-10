@@ -22,9 +22,6 @@ export default function Header() {
           </Link>
         </nav>
         <div className="flex items-center gap-4">
-          <Link href="/translate">
-            <Button>Start Translation</Button>
-          </Link>
           <Button variant="outline" size="icon" className="md:hidden">
             <svg
               xmlns="http://www.w3.org/2000/svg"
