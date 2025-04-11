@@ -5,14 +5,14 @@ export interface MalayalamLetter {
   pronunciation: string
 }
 
-// New class mapping from the backend model (updated)
+// Updated class mapping from the backend model
 export const classMapping = {
-  a: 0, aa: 1, ah: 2, ai: 3, am: 4, au: 5, ba: 6, bha: 7, cha: 8, chha: 9, 
-  da: 10, dda: 11, dha: 12, dhha: 13, e: 14, ee: 15, ga: 16, gha: 17, ha: 18, 
-  i: 19, ii: 20, ja: 21, ka: 22, kha: 23, la: 24, lla: 25, ma: 26, na: 27, 
-  nga: 28, njya: 29, nna: 30, nothing: 31, o: 32, oo: 33, pa: 34, pha: 35, 
-  r: 36, ra: 37, rra: 38, sa: 39, sha: 40, shha: 41, ta: 42, tha: 43, thha: 44, 
-  tta: 45, u: 46, uu: 47, va: 48, ya: 49, zha: 50
+  a: 0, aa: 1, ae: 2, ai: 3, au: 4, ba: 5, bha: 6, cha: 7, chha: 8, 
+  da: 9, dha: 10, dha_: 11, dhha: 12, e: 13, ee: 14, ga: 15, gha: 16, 
+  ha: 17, i: 18, ja: 19, jha: 20, ka: 21, kha: 22, la: 23, lla: 24, 
+  ma: 25, na: 26, na_: 27, nga: 28, nya: 29, o: 30, oo: 31, oo_: 32, 
+  pa: 33, pha: 34, ra: 35, ra_: 36, ru: 37, sa: 38, sha: 39, ssha: 40, 
+  ta: 41, tha: 42, tha_: 43, thha: 44, u: 45, va: 46, ya: 47, zha: 48
 }
 
 // Get all class names from the mapping
@@ -22,55 +22,53 @@ export const allGestureClasses = Object.keys(classMapping)
 export const gestureToMalayalam: Record<string, MalayalamLetter> = {
   a: { english: "a", malayalam: "അ", pronunciation: "ah" },
   aa: { english: "aa", malayalam: "ആ", pronunciation: "aah" },
-  ah: { english: "ah", malayalam: "അഃ", pronunciation: "aha" },
+  ae: { english: "ae",malayalam: "ഏ", pronunciation: "eeh" },
   ai: { english: "ai", malayalam: "ഐ", pronunciation: "ai" },
-  am: { english: "am", malayalam: "അം", pronunciation: "am" },
   au: { english: "au", malayalam: "ഔ", pronunciation: "au" },
   ba: { english: "ba", malayalam: "ബ", pronunciation: "ba" },
   bha: { english: "bha", malayalam: "ഭ", pronunciation: "bha" },
   cha: { english: "cha", malayalam: "ച", pronunciation: "cha" },
   chha: { english: "chha", malayalam: "ഛ", pronunciation: "chha" },
   da: { english: "da", malayalam: "ഡ", pronunciation: "da" },
-  dda: { english: "dda", malayalam: "ഢ", pronunciation: "ɖʱa" },
-  dha: { english: "dha", malayalam: "ദ", pronunciation: "d̪a" },
+  dha: { english: "dha", malayalam: "ഢ", pronunciation: " ɖʱa" },
+  dha_: { english: "dha_", malayalam: "ദ", pronunciation: "d̪a" },
   dhha: { english: "dhha", malayalam: "ധ", pronunciation: "d̪ʱa" },
   e: { english: "e", malayalam: "എ", pronunciation: "ea" },
-  ee: { english: "ee", malayalam: "ഏ", pronunciation: "eeh" },
-  ga: { english: "ga", malayalam: "ഗ", pronunciation: "ga" },
-  gha: { english: "gha", malayalam: "ഘ", pronunciation: "gha" },
+  ee: { english: "ee", malayalam: "ഈ", pronunciation: "eeh" },
+  ga: { english: "ga", malayalam: "ഘ", pronunciation: "gha" },
+  gha: { english: "gha", malayalam: "ഗ", pronunciation: "ga" },
   ha: { english: "ha", malayalam: "ഹ", pronunciation: "ha" },
   i: { english: "i", malayalam: "ഇ", pronunciation: "eh" },
-  ii: { english: "ii", malayalam: "ഈ", pronunciation: "eeh" },
   ja: { english: "ja", malayalam: "ജ", pronunciation: "ja" },
+  jha: { english: "jha", malayalam: "ഝ", pronunciation: "jha" },
   ka: { english: "ka", malayalam: "ക", pronunciation: "ka" },
   kha: { english: "kha", malayalam: "ഖ", pronunciation: "kha" },
   la: { english: "la", malayalam: "ല", pronunciation: "la" },
-  lla: { english: "lla", malayalam: "ള്ള", pronunciation: "lla" },
+  lla: { english: "lla", malayalam: "ള", pronunciation: "lla" },
   ma: { english: "ma", malayalam: "മ", pronunciation: "ma" },
-  na: { english: "na", malayalam: "ന", pronunciation: "na" },
+  na: { english: "na", malayalam: "ണ", pronunciation: "nna" },
+  na_: { english: "na_", malayalam: "ന", pronunciation: "na" },
   nga: { english: "nga", malayalam: "ങ", pronunciation: "nga" },
-  njya: { english: "njya", malayalam: "ഞ", pronunciation: "nya" },
-  nna: { english: "nna", malayalam: "ണ", pronunciation: "nna" },
+  nya: { english: "nya", malayalam: "ഞ", pronunciation: "nya" },
   o: { english: "o", malayalam: "ഒ", pronunciation: "oh" },
-  oo: { english: "oo", malayalam: "ഓ", pronunciation: "ooh" },
+  oo: { english: "oo", malayalam: "ഊ", pronunciation: "uː" },
+  oo_: { english: "oo_", malayalam: "ഓ", pronunciation: "ooh" },
   pa: { english: "pa", malayalam: "പ", pronunciation: "pa" },
   pha: { english: "pha", malayalam: "ഫ", pronunciation: "pʰa" },
-  r: { english: "r", malayalam: "ഋ", pronunciation: "ri" },
   ra: { english: "ra", malayalam: "ര", pronunciation: "ra" },
-  rra: { english: "rra", malayalam: "റ", pronunciation: "rra" },
+  ra_: { english: "ra_", malayalam: "റ", pronunciation: "rra" },
+  ru: { english: "ru", malayalam: "ഋ", pronunciation: "ru" },
   sa: { english: "sa", malayalam: "സ", pronunciation: "sa" },
   sha: { english: "sha", malayalam: "ശ", pronunciation: "sha" },
-  shha: { english: "shha", malayalam: "ഷ", pronunciation: "ʂa" },
+  ssha: { english: "ssha", malayalam: "ഷ", pronunciation: "ʂa" },
   ta: { english: "ta", malayalam: "ട", pronunciation: "ta" },
-  tha: { english: "tha", malayalam: "ത", pronunciation: "tha" },
+  tha: { english: "tha", malayalam: "ഠ", pronunciation: "ʈʰa" },
+  tha_: { english: "tha_", malayalam: "ത", pronunciation: "tha" },
   thha: { english: "thha", malayalam: "ഥ", pronunciation: "thha" },
-  tta: { english: "tta", malayalam: "ഠ", pronunciation: "ʈʰa" },
   u: { english: "u", malayalam: "ഉ", pronunciation: "uh" },
-  uu: { english: "uu", malayalam: "ഊ", pronunciation: "uː" },
   va: { english: "va", malayalam: "വ", pronunciation: "va" },
   ya: { english: "ya", malayalam: "യ", pronunciation: "ya" },
-  zha: { english: "zha", malayalam: "ഴ", pronunciation: "zha" },
-  nothing: { english: "", malayalam: "", pronunciation: "" }
+  zha: { english: "zha", malayalam: "ഴ", pronunciation: "zha" }
 }
 
 // Utility functions
@@ -89,12 +87,11 @@ export function findMalayalamByEnglish(english: string): MalayalamLetter | undef
   return malayalamLetter;
 }
 
-
 export function findMalayalamByCharacter(character: string): MalayalamLetter | undefined {
   return Object.values(gestureToMalayalam).find(letter => letter.malayalam === character)
 }
 
 // Get all gesture classes for simulation
 export function getAllGestureClasses(): string[] {
-  return allGestureClasses.filter((cls) => cls !== "nothing")
+  return allGestureClasses
 }
